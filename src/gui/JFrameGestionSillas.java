@@ -39,7 +39,8 @@ public class JFrameGestionSillas extends javax.swing.JFrame {
         modeloSillas.setRowCount(0); // Aquí limpiamos la tabla
 
         for (Silla s : sillas) {
-            modeloSillas.addRow(new Object[] { s.getNumero(), s.getTramo(), s.getTramo().getPrecio(), s.getReserva(), s.getUsuario().getLogin()});
+            modeloSillas.addRow(new Object[] { s.getNumero(), s.getTramo().getTramo(),
+                s.getTramo().getPrecio(), s.getUsuario().getLogin()});
         }
     }
 

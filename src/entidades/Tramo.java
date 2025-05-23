@@ -10,9 +10,17 @@ package entidades;
  */
 public class Tramo implements Comparable<Tramo>{
     
+    //Clase en la cual se asigna el precio de todas las sillas de ese tramo. Según la documentación oficial
+    //de carrera oficial https://gestionabonos.hermandades-de-sevilla.org/configuracion/inicio.do;jsessionid=32B8CE91A3681DF37D889675E6F8F5E5
+    //Cada tramo tiene asignado un precio con todas las sillas a ese precio.
+    
+    //Eliminada hija Silla, todo lo demás igual.
+    
+    //Atributos
     private String tramo;
     private double precio;
     
+    //Constructor
     public Tramo(String tramo, double precio){
         this.tramo = tramo;
         this.precio = precio;

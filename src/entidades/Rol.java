@@ -10,6 +10,9 @@ package entidades;
  */
 public class Rol {
     
+    //Clase que permite añadir los que roles que sean necesarios. En este programa solo he contemplado dos (admin, usuario)
+    //He pensado que pueda ser escalable
+    
     private String rol;
     
     public Rol (String rol){

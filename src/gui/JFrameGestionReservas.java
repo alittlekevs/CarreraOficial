@@ -5,11 +5,7 @@
 package gui;
 
 import datos.DAOReserva;
-import datos.DAORol;
-import datos.DAOUsuarios;
 import entidades.Reserva;
-import entidades.Rol;
-import entidades.Usuario;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -43,23 +39,10 @@ public class JFrameGestionReservas extends javax.swing.JFrame {
         modeloReservas.setRowCount(0); // Aquí limpiamos la tabla
 
         for (Reserva r : reservas) {
-            modeloReservas.addRow(new Object[] { r.getFechaReserva(), r.getPrecioTotal(), r.getUsuario().getLogin()});
+            modeloReservas.addRow(new Object[] { r.getId(), r.getFechaReserva(), r.getPrecioTotal(), r.getUsuario().getLogin()});
         }
     }
     
-    /*private void cargarRoles(){
-        DAORol daoRol = new DAORol();
-        List<Rol> roles = daoRol.consultarRoles();
-        
-        //Limpiamos la lista para que no se acumule
-        comboBoxRol.removeAllItems();
-        
-        //Nombres de los tramos
-        for (Rol r : roles) {
-            comboBoxRol.addItem(r.getRol());
-        }
-    }*/
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

@@ -13,16 +13,17 @@ import java.util.Objects;
  */
 public class Usuario extends Rol{
     
+    //Herencia Usuario -> Rol
     private String login;
     private String password;
-    private Rol rol;
     
+    //Constructor
     public Usuario(String login, String password, String rol)  {
         super(rol);
         this.login = login;
         this.password = password;
     }
-
+    
     public String getLogin() {
         return login;
     }
@@ -63,10 +64,7 @@ public class Usuario extends Rol{
             return false;
         }
         final Usuario other = (Usuario) obj;
-        if (!Objects.equals(this.login, other.login)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.login, other.login);
     }
     
 }

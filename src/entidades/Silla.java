@@ -11,15 +11,24 @@ import java.util.Objects;
  *
  * @author Kevin
  */
-public class Silla extends Tramo {
+public class Silla implements Comparable<Silla>{
     
-    private int numero;
+    //1.Eliminada herencia con padre Tramo
+    //2.Añadido comparable para ordenamiento
+    //3.Modificado el constructor respecto a la eliminación de la herencia
+    
+    //Atributos
+    private int numero; //auto_incrementado
     private Reserva reserva;
     private Usuario usuario;
+    private Tramo tramo;
     
-    public Silla(int numero, String tramo, double precio) {
-        super(tramo, precio);
+    //Constructor
+    public Silla(int numero, Tramo tramo, Usuario usuario, Reserva reserva) {
         this.numero = numero;
+        this.tramo = tramo;
+        this.usuario = usuario;
+        this.reserva = reserva;
     }
 
     //Getters & Setters
@@ -47,16 +56,25 @@ public class Silla extends Tramo {
         this.usuario = usuario;
     }
     
+    public Tramo getTramo() {
+        return tramo;
+    }
+
+    public void setTramo(Tramo tramo ) {
+        this.tramo = tramo;
+    }
+    
     @Override
     public String toString() {
-        return "Silla{" + 
-               "numero=" + numero + 
-               ", tramo='" + super.getTramo() + '\'' + 
-               ", precio=" + super.getPrecio() + 
-               ", reserva=" + (reserva != null ? reserva.toString() : "null") +
-               ", usuario=" + (usuario != null ? usuario.toString() : "null") +
+        return "Silla{" +
+               "numero=" + numero +
+               ", tramo='" + (tramo != null ? tramo.getTramo() : "null") + '\'' +
+               ", precio=" + (tramo != null ? tramo.getPrecio() : "null") +
+               ", usuario='" + (usuario != null ? usuario.getLogin() : "null") + '\'' +
+               ", idReserva=" + (reserva != null ? reserva.getId() : "null") +
                '}';
     }
+
 
     @Override
     public int hashCode() {
@@ -76,12 +94,18 @@ public class Silla extends Tramo {
     }
     
     //Métodos de ordenamiento tanto ascendente como descendente de precio 
-    public int compareTo(Tramo o) {
-        return Double.compare(this.getPrecio(), o.getPrecio());
+    //Ascendente
+    public int compareTo(Silla otra) {
+        return Double.compare(this.getTramo().getPrecio(), otra.getTramo().getPrecio());
+    }
+
+    //Descendente
+    public int compareToDesc(Silla otra) {
+        return Double.compare(otra.getTramo().getPrecio(), this.getTramo().getPrecio());
     }
     
-    public int compareToDesc(Tramo o){
-        return Double.compare(o.getPrecio(), this.getPrecio());
+    //Orden por número
+    public int compareToNumero(Silla otra) {
+        return Integer.compare(this.getNumero(), otra.getNumero());
     }
-    
 }

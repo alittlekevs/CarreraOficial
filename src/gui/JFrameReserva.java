@@ -12,7 +12,8 @@ import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import entidades.Reserva;
-import java.text.SimpleDateFormat;
+import entidades.Tramo;
+import entidades.Usuario;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,27 +26,29 @@ public class JFrameReserva extends javax.swing.JFrame {
     //En el toggle utilizo compareTo
     //En filtroPorTramo utilizo .stream con .equals + .collect(collection.sort) para ordenar por defecto
     
-    private List<Silla> listaSillasDisponibles; // Lista completa de sillas
+    private List<Silla> listaSillasDisponibles; // Lista completa de sillas disponibles
+    private List<Silla> listaSillasReservables;
     private List<Silla> listaSillasReservadas;
     private DefaultTableModel modeloSillasDisponibles; //Tabla con los datos de las sillas disponibles
     private DefaultTableModel modeloSillasReservables; //Tabla con los datos de las sillas que se encuentran para reservar
-    //private String login;
+    private static Usuario usuario;
     /**
      * Creates new form Reserva
      */
-    public JFrameReserva() {
-        //this.login = login;
+    public JFrameReserva(Usuario usuario) {
+        this.usuario = usuario;
         setTitle("Reservar sillas");
         //Centrar
         initComponents();
         cargarTramos(); //Cargamos los nombres de los tramos en el comboBox
-        cargarSillas();
+        cargarSillasSinReserva();
         filtroPorTramo();
         this.setLocationRelativeTo(null);
     }
 
-    //Método para cargar las sillas
-    private void cargarSillas(){
+    //Métodos
+    //Método para cargar las sillas sin reserva
+    private void cargarSillasSinReserva(){
         DAOSillas daoSillas = new DAOSillas();
         listaSillasDisponibles = daoSillas.consultarSillasSinReserva(); 
         
@@ -76,7 +79,7 @@ public class JFrameReserva extends javax.swing.JFrame {
                 sillasFiltradas = listaSillasDisponibles; // Mostrar todas las sillas
             } else {
                 sillasFiltradas = listaSillasDisponibles.stream() //Aplicamos stream para filtrar las sillas
-                        .filter(silla -> silla.getTramo().equals(tramoSeleccionado))
+                        .filter(silla -> silla.getTramo().getTramo().equals(tramoSeleccionado))
                         .collect(Collectors.toList()); //Ordenamiento por defecto (alfabético)
             }
 
@@ -90,22 +93,39 @@ public class JFrameReserva extends javax.swing.JFrame {
         modeloSillasDisponibles.setRowCount(0); // Aquí limpiamos la tabla
 
         for (Silla silla : sillas) {
-            modeloSillasDisponibles.addRow(new Object[] { silla.getNumero(), silla.getTramo(), silla.getPrecio() });
+            modeloSillasDisponibles.addRow(new Object[] { silla.getNumero(), silla.getTramo().getTramo(), 
+                silla.getTramo().getPrecio() });
         }
     }
     
-    private void actualizarPrecioTotal() {
-        double precioTotal = 0.0;
-
-        // Iterar sobre las filas de la tabla listaReservables y sumar los precios
-        for (int i = 0; i < modeloSillasReservables.getRowCount(); i++) {
-            // Obtener el valor de la columna "Precio" para cada fila (columna 2)
-            precioTotal += (double) modeloSillasReservables.getValueAt(i, 2);
+    private List<Silla> obtenerSillasReservables() {
+        if (listaSillasReservables == null) {
+            listaSillasReservables = new ArrayList<>();
+        } else {
+        listaSillasReservables.clear();
         }
 
-        // Actualizar la etiqueta con el precio total formateado
+        for (int i = 0; i < modeloSillasReservables.getRowCount(); i++) {
+            int numero = Integer.parseInt(modeloSillasReservables.getValueAt(i, 0).toString());
+            String tramoStr = modeloSillasReservables.getValueAt(i, 1).toString();
+            double precio = Double.parseDouble(modeloSillasReservables.getValueAt(i, 2).toString());
+
+            Tramo tramo = new Tramo(tramoStr, precio);
+            Silla silla = new Silla(numero, tramo, null, null);
+            listaSillasReservables.add(silla);
+        }
+        return listaSillasReservables;
+    }
+    
+    private void actualizarPrecioTotal() {
+        obtenerSillasReservables();
+
+        Reserva reservaTemporal = new Reserva(LocalDate.now(), null, listaSillasReservables);
+        double precioTotal = reservaTemporal.getPrecioTotal();
         campoPrecioTotal.setText(String.format("%.2f €", precioTotal));
     }
+    
+    
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -129,6 +149,7 @@ public class JFrameReserva extends javax.swing.JFrame {
         etiquetaTotal = new javax.swing.JLabel();
         campoPrecioTotal = new javax.swing.JLabel();
         jDateChooser1 = new com.toedter.calendar.JDateChooser();
+        botonOrdenarPorNumero = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         menuInicio = new javax.swing.JMenu();
         menuItemSalir = new javax.swing.JMenuItem();
@@ -254,6 +275,13 @@ public class JFrameReserva extends javax.swing.JFrame {
         campoPrecioTotal.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         campoPrecioTotal.setText("0 €");
 
+        botonOrdenarPorNumero.setText("Ordenar por Número");
+        botonOrdenarPorNumero.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonOrdenarPorNumeroActionPerformed(evt);
+            }
+        });
+
         menuInicio.setText("Inicio");
         menuInicio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -282,7 +310,9 @@ public class JFrameReserva extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(toggleOrdenPrecio)
-                        .addGap(226, 226, 226)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(botonOrdenarPorNumero, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(56, 56, 56)
                         .addComponent(etiquetaSillasDisponibles))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -312,7 +342,9 @@ public class JFrameReserva extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(toggleOrdenPrecio)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(toggleOrdenPrecio)
+                            .addComponent(botonOrdenarPorNumero))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(25, 25, 25)
@@ -350,124 +382,126 @@ public class JFrameReserva extends javax.swing.JFrame {
     }//GEN-LAST:event_botonAgregarActionPerformed
 
     private void botonAgregarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonAgregarMouseClicked
-        int selectedRow = tablaSillasDisponibles.getSelectedRow(); // Obtener fila seleccionada en listaSillasDisponibles
-        if (selectedRow != -1) { // Asegurarse de que se seleccionó una fila
-            // Obtener los datos de la fila seleccionada
-            Object numero = tablaSillasDisponibles.getValueAt(selectedRow, 0);
-            Object tramo = tablaSillasDisponibles.getValueAt(selectedRow, 1);
-            Object precio = tablaSillasDisponibles.getValueAt(selectedRow, 2);
+        int selectedRow = tablaSillasDisponibles.getSelectedRow();
+        if (selectedRow != -1) {
+            int numero = Integer.parseInt(tablaSillasDisponibles.getValueAt(selectedRow, 0).toString());
+            String tramo = tablaSillasDisponibles.getValueAt(selectedRow, 1).toString();
+            double precio = Double.parseDouble(tablaSillasDisponibles.getValueAt(selectedRow, 2).toString());
 
-            // Agregar la fila seleccionada a listaReservables
-            modeloSillasReservables = (DefaultTableModel) tablaReservables.getModel();
-            modeloSillasReservables.addRow(new Object[] { numero, tramo, precio });
+            // Busca la Silla correspondiente y elimínala de la lista lógica
+            listaSillasDisponibles.removeIf(silla ->
+                silla.getNumero() == numero &&
+                silla.getTramo().getTramo().equals(tramo) &&
+                silla.getTramo().getPrecio() == precio
+        );
 
-            // Eliminar la fila seleccionada de listaSillasDisponibles
-            DefaultTableModel modeloDisponibles = (DefaultTableModel) tablaSillasDisponibles.getModel();
-            modeloDisponibles.removeRow(selectedRow);
-            
-            //Actualizar precio total
-            actualizarPrecioTotal();
+        // Agrega a la tabla visual de reservables
+        modeloSillasReservables = (DefaultTableModel) tablaReservables.getModel();
+        modeloSillasReservables.addRow(new Object[] { numero, tramo, precio });
+
+        // Elimina de la tabla visual de disponibles
+        modeloSillasDisponibles = (DefaultTableModel) tablaSillasDisponibles.getModel();
+        modeloSillasDisponibles.removeRow(selectedRow);
+
+        actualizarPrecioTotal();
         }
     }//GEN-LAST:event_botonAgregarMouseClicked
 
     private void botonQuitarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonQuitarMouseClicked
-        int selectedRow = tablaReservables.getSelectedRow(); // Seleccionar una fila
-        if (selectedRow != -1) { // Fila seleccionada
-            // Obtener los datos de esta fila
-            Object numero = tablaReservables.getValueAt(selectedRow, 0);
-            Object tramo = tablaReservables.getValueAt(selectedRow, 1);
-            Object precio = tablaReservables.getValueAt(selectedRow, 2);
+        int selectedRow = tablaReservables.getSelectedRow();
+        if (selectedRow != -1) {
+        int numero = Integer.parseInt(tablaReservables.getValueAt(selectedRow, 0).toString());
+        String tramo = tablaReservables.getValueAt(selectedRow, 1).toString();
+        double precio = Double.parseDouble(tablaReservables.getValueAt(selectedRow, 2).toString());
 
-            // Agregamos la silla en listaSillasDisponibles
-            modeloSillasDisponibles = (DefaultTableModel) tablaSillasDisponibles.getModel();
-            modeloSillasDisponibles.addRow(new Object[] { numero, tramo, precio });
+        //Arreglado el error que solo "ordenaba la lista visual y no la lógica"
+        //Devolvemos la silla a la lista disponible
+        Silla silla = new Silla(numero, new Tramo(tramo, precio), null, null);
+        listaSillasDisponibles.add(silla);
 
-            // Eliminamos la silla de listaReservables
-            modeloSillasReservables = (DefaultTableModel) tablaReservables.getModel();
-            modeloSillasReservables.removeRow(selectedRow);
-            
-            //Actualizar precio total
-            actualizarPrecioTotal();
+        // Ordenamos por número asc
+        listaSillasDisponibles.sort((s1, s2) -> s1.compareToNumero(s2));
+
+        // Actualiza la tabla visual de disponibles
+        actualizarTabla(listaSillasDisponibles);
+
+        // Elimina de la tabla visual de reservables
+        modeloSillasReservables = (DefaultTableModel) tablaReservables.getModel();
+        modeloSillasReservables.removeRow(selectedRow);
+
+        actualizarPrecioTotal();
         }
     }//GEN-LAST:event_botonQuitarMouseClicked
 
-    private List<Silla> obtenerSillasReservables() {
-        for (int i = 0; i < modeloSillasReservables.getRowCount(); i++) {
-            int numero = (int) modeloSillasReservables.getValueAt(i, 0);
-            String tramo = (String) modeloSillasReservables.getValueAt(i, 1);
-            double precio = (double) modeloSillasReservables.getValueAt(i, 2);
-
-            // Crear un objeto Silla y agregarlo a la lista
-            Silla silla = new Silla(numero, tramo, precio);
-            listaSillasReservadas.add(silla);
-        }
-
-        return listaSillasReservadas;
-    }
-    //cambiar por calcular el precioTotal de la lista
-    private double calcularPrecioTotal() {
-        double precioTotal = 0.0;
-    
-        for (int i = 0; i < modeloSillasReservables.getRowCount(); i++) {
-            precioTotal += (double) modeloSillasReservables.getValueAt(i, 2);
-        }
-    
-        return precioTotal;
-    }
-    
-    /*
     private void botonReservarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonReservarMouseClicked
         if (tablaReservables.getRowCount()== 0) {
         JOptionPane.showMessageDialog(this,
                 "No hay sillas seleccionadas para reservar.",
                 "Advertencia",
                 JOptionPane.WARNING_MESSAGE);
-            return; 
+        return; 
         }
         int opcion = JOptionPane.showConfirmDialog(this,
-                "¿Quieres confirmar la reserva?",
-                "Confirmar Reserva",
-                JOptionPane.YES_NO_OPTION);
+            "¿Quieres confirmar la reserva?",
+            "Confirmar Reserva",
+            JOptionPane.YES_NO_OPTION);
         if (opcion == JOptionPane.YES_OPTION) {
-            try {
-            // Obtener las sillas seleccionadas para la reserva
-            List<Silla> sillasReservadas = obtenerSillasReservables();
-            
-            // Verificar que haya sillas seleccionadas
-            if (sillasReservadas.isEmpty()) {
+        try {
+            // Obtener la fecha seleccionada
+            Date utilDate = jDateChooser1.getDate();
+            if (utilDate == null) {
                 JOptionPane.showMessageDialog(this,
-                        "No se seleccionaron sillas para la reserva.",
+                        "Selecciona una fecha para la reserva.",
                         "Advertencia",
                         JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            
-        // Crear una nueva reserva
-        DAOReserva daoReserva = new DAOReserva();
-        Reserva reserva = new Reserva(jCalendar1, listaSillasReservadas); //corregir
+            LocalDate fechaReserva = utilDate.toInstant()
+                .atZone(java.time.ZoneId.systemDefault())
+                .toLocalDate();
 
-        // Realizar la reserva
-        daoReserva.reservarSillas(reserva);//corregir
+            LocalDate hoy = LocalDate.now();
+            if (!fechaReserva.isAfter(hoy)) {
+                JOptionPane.showMessageDialog(this,
+                        "La fecha de la reserva debe ser posterior a la fecha actual.",
+                        "Advertencia",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-        // Mostrar mensaje de éxito
-        JOptionPane.showMessageDialog(this,
-                "Reserva realizada con éxito.\nID de Reserva: " + reserva.getId(),
-                "Éxito",
-                JOptionPane.INFORMATION_MESSAGE);
+            // Obtener las sillas que se encuentran para reservar
+            listaSillasReservadas = obtenerSillasReservables();
 
-        cargarSillas(); // Recargar las sillas disponibles
-        modeloSillasReservables.setRowCount(0); // Limpiar la tabla de reservables
-        actualizarPrecioTotal(); // Reiniciar el precio total
+            Reserva reserva = new Reserva(fechaReserva, usuario, listaSillasReservables);
+
+            // Insertamos la reserva
+            DAOReserva daoReserva = new DAOReserva();
+            daoReserva.insertarReserva(reserva);
+
+            // Generar el archivo de la reserva
+            reserva.generarReserva();
+
+            // Confirmaci`´on
+            String rutaArchivo = System.getProperty("user.home") + "/Desktop/reserva_" + reserva.getId() + ".txt";
+            JOptionPane.showMessageDialog(this,
+                    "Reserva realizada con éxito.\nID de Reserva: " + reserva.getId() +
+                    "\nArchivo generado en:\n" + rutaArchivo,
+                    "Éxito",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+            cargarSillasSinReserva(); // Recargar las sillas disponibles
+            modeloSillasReservables.setRowCount(0); // Limpiar la tabla de reservables
+            actualizarPrecioTotal(); // Reiniciar el precio total
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
                     "Ocurrió un error al realizar la reserva.\n" + e.getMessage(),
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
-            }
         }
+    }
     }//GEN-LAST:event_botonReservarMouseClicked
-*/  
+  
     private void toggleOrdenPrecioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleOrdenPrecioActionPerformed
         if (toggleOrdenPrecio.isSelected()) {
               // Ordenar por precio descendente
@@ -492,6 +526,11 @@ public class JFrameReserva extends javax.swing.JFrame {
         dispose();
         newframe.setVisible(true);
     }//GEN-LAST:event_menuItemSalirActionPerformed
+
+    private void botonOrdenarPorNumeroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonOrdenarPorNumeroActionPerformed
+        listaSillasDisponibles.sort((s1, s2) -> s1.compareToNumero(s2));
+        actualizarTabla(listaSillasDisponibles);
+    }//GEN-LAST:event_botonOrdenarPorNumeroActionPerformed
 
     /**
      * @param args the command line arguments
@@ -526,13 +565,14 @@ public class JFrameReserva extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new JFrameReserva().setVisible(true);
+                new JFrameReserva(usuario).setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonAgregar;
+    private javax.swing.JButton botonOrdenarPorNumero;
     private javax.swing.JButton botonQuitar;
     private javax.swing.JButton botonReservar;
     private javax.swing.JLabel campoPrecioTotal;
