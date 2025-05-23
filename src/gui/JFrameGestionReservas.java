@@ -4,8 +4,10 @@
  */
 package gui;
 
+import datos.DAOReserva;
 import datos.DAORol;
 import datos.DAOUsuarios;
+import entidades.Reserva;
 import entidades.Rol;
 import entidades.Usuario;
 import java.util.List;
@@ -18,22 +20,31 @@ import javax.swing.table.DefaultTableModel;
  */
 public class JFrameGestionReservas extends javax.swing.JFrame {
 
-    private List<Usuario> listaUsuarios;
-    private DefaultTableModel modeloUsuarios;
+    private List<Reserva> listaReservas;
+    private DefaultTableModel modeloReservas;
     /**
      * Creates new form JFrameGestionUsuarios
      */
     public JFrameGestionReservas() {
         initComponents();
-        cargarUsuarios();
+        cargarReservas();
         this.setLocationRelativeTo(null);
     }
     
-    private void cargarUsuarios(){
-        DAOUsuarios daoUsuarios = new DAOUsuarios();
-        listaUsuarios = daoUsuarios.consultarUsuarios();
+    private void cargarReservas(){
+        DAOReserva daoReservas = new DAOReserva();
+        listaReservas = daoReservas.consultarReserva();
         
-        actualizarTabla(listaUsuarios);
+        actualizarTabla(listaReservas);
+    }
+    
+    private void actualizarTabla(List<Reserva> reservas) {
+        modeloReservas = (DefaultTableModel) tablaReservas.getModel(); //Casteamos la table porque no es compatible
+        modeloReservas.setRowCount(0); // Aquí limpiamos la tabla
+
+        for (Reserva r : reservas) {
+            modeloReservas.addRow(new Object[] { r.getFechaReserva(), r.getPrecioTotal(), r.getUsuario().getLogin()});
+        }
     }
     
     /*private void cargarRoles(){
@@ -48,15 +59,6 @@ public class JFrameGestionReservas extends javax.swing.JFrame {
             comboBoxRol.addItem(r.getRol());
         }
     }*/
-    
-    private void actualizarTabla(List<Usuario> usuarios) {
-        modeloUsuarios = (DefaultTableModel) tablaUsuarios.getModel(); //Casteamos la table porque no es compatible
-        modeloUsuarios.setRowCount(0); // Aquí limpiamos la tabla
-
-        for (Usuario u : usuarios) {
-            modeloUsuarios.addRow(new Object[] { u.getLogin(), u.getPassword(), u.getRol()});
-        }
-    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -68,44 +70,37 @@ public class JFrameGestionReservas extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        tablaUsuarios = new javax.swing.JTable();
-        botonAgregar = new javax.swing.JButton();
+        tablaReservas = new javax.swing.JTable();
         botonEliminar = new javax.swing.JButton();
         etiquetaUsuarios = new javax.swing.JLabel();
-        etiquetaLogin = new javax.swing.JLabel();
-        textLogin = new javax.swing.JTextField();
-        etiquetaRol = new javax.swing.JLabel();
-        etiquetaPass = new javax.swing.JLabel();
-        textPass = new javax.swing.JTextField();
         botonSalir = new javax.swing.JButton();
-        textRol = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        tablaUsuarios.setModel(new javax.swing.table.DefaultTableModel(
+        tablaReservas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Nombre", "Password", "Rol"
+                "ID", "Fecha Reserva", "Precio Total", "Login Usuario"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Double.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
-        });
-        jScrollPane1.setViewportView(tablaUsuarios);
 
-        botonAgregar.setText("Agregar");
-        botonAgregar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonAgregarActionPerformed(evt);
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
+        jScrollPane1.setViewportView(tablaReservas);
 
         botonEliminar.setText("Eliminar");
         botonEliminar.addActionListener(new java.awt.event.ActionListener() {
@@ -115,28 +110,7 @@ public class JFrameGestionReservas extends javax.swing.JFrame {
         });
 
         etiquetaUsuarios.setFont(new java.awt.Font("sansserif", 1, 24)); // NOI18N
-        etiquetaUsuarios.setText("Gestionar Usuarios");
-
-        etiquetaLogin.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
-        etiquetaLogin.setText("Login:");
-
-        textLogin.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textLoginActionPerformed(evt);
-            }
-        });
-
-        etiquetaRol.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
-        etiquetaRol.setText("Rol:");
-
-        etiquetaPass.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
-        etiquetaPass.setText("Password:");
-
-        textPass.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textPassActionPerformed(evt);
-            }
-        });
+        etiquetaUsuarios.setText("Gestionar Reservas");
 
         botonSalir.setText("Salir");
         botonSalir.addActionListener(new java.awt.event.ActionListener() {
@@ -157,24 +131,11 @@ public class JFrameGestionReservas extends javax.swing.JFrame {
                         .addGap(0, 729, Short.MAX_VALUE)
                         .addComponent(botonSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(etiquetaLogin)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(textLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(etiquetaPass, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(etiquetaUsuarios)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(textPass, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(etiquetaRol)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(textRol, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(botonAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(botonEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(271, 271, 271)
+                                .addComponent(etiquetaUsuarios))
+                            .addComponent(botonEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -183,18 +144,10 @@ public class JFrameGestionReservas extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(etiquetaUsuarios)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(etiquetaLogin)
-                    .addComponent(textLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(etiquetaRol)
-                    .addComponent(etiquetaPass)
-                    .addComponent(textPass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(textRol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botonAgregar)
-                    .addComponent(botonEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(11, 11, 11)
+                .addComponent(botonEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(botonSalir)
                 .addGap(8, 8, 8))
@@ -202,44 +155,6 @@ public class JFrameGestionReservas extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void botonAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAgregarActionPerformed
-        String login = textLogin.getText().trim();
-        String password = textPass.getText().trim();
-        String rol = textRol.getText().trim();
-        
-        if (login.isEmpty() || password.isEmpty() || rol.isEmpty()) {
-            JOptionPane.showMessageDialog(this, 
-                    "Todos los campos son obligatorios.", 
-                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        
-        Usuario nuevoUsuario = new Usuario(login, password, rol);
-        DAOUsuarios daoUsuarios = new DAOUsuarios();
-        daoUsuarios.insertarUsuario(nuevoUsuario);
-
-        // Añadimos el usuario a la tabla
-        modeloUsuarios.addRow(new Object[] { login , password, rol });
-
-        // Limpiamos los campos de texto
-        textLogin.setText("");
-        textPass.setText("");
-        textRol.setText("");
-
-        // Mostramos el mensaje de información
-        JOptionPane.showMessageDialog(this, 
-                "Usuario agregado correctamente.", 
-                "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_botonAgregarActionPerformed
-
-    private void textLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textLoginActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_textLoginActionPerformed
-
-    private void textPassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textPassActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_textPassActionPerformed
 
     private void botonSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonSalirActionPerformed
         JFrameAdmin newframe = new JFrameAdmin();
@@ -249,7 +164,7 @@ public class JFrameGestionReservas extends javax.swing.JFrame {
 
     private void botonEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEliminarActionPerformed
         // Fila
-        int filaSeleccionada = tablaUsuarios.getSelectedRow();
+        int filaSeleccionada = tablaReservas.getSelectedRow();
         
         // Validar si hay fila seleccionada
         if (filaSeleccionada == -1) {
@@ -266,15 +181,15 @@ public class JFrameGestionReservas extends javax.swing.JFrame {
                 JOptionPane.YES_NO_OPTION);
 
         if (opcion == JOptionPane.YES_OPTION) {
-            // Cogemos el valor del login de esa fila (login)
-            String login = (String)tablaUsuarios.getValueAt(filaSeleccionada, 0); 
+            // Cogemos el valor del login de la fila
+            Integer id = (Integer)tablaReservas.getValueAt(filaSeleccionada, 0); 
 
-            // Cargamos la base de datos para eliminar al usuario
-            DAOUsuarios daoUsuarios = new DAOUsuarios();
-            daoUsuarios.eliminarUsuario(login); 
+            // Cargamos la base de datos para eliminar la reserva
+            DAOReserva daoReservas = new DAOReserva();
+            daoReservas.eliminarReserva(id);
 
             // Eliminar la fila del modelo
-            modeloUsuarios.removeRow(filaSeleccionada);
+            modeloReservas.removeRow(filaSeleccionada);
 
             // Mostrar mensaje de éxito
             JOptionPane.showMessageDialog(this, 
@@ -320,17 +235,10 @@ public class JFrameGestionReservas extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton botonAgregar;
     private javax.swing.JButton botonEliminar;
     private javax.swing.JButton botonSalir;
-    private javax.swing.JLabel etiquetaLogin;
-    private javax.swing.JLabel etiquetaPass;
-    private javax.swing.JLabel etiquetaRol;
     private javax.swing.JLabel etiquetaUsuarios;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tablaUsuarios;
-    private javax.swing.JTextField textLogin;
-    private javax.swing.JTextField textPass;
-    private javax.swing.JTextField textRol;
+    private javax.swing.JTable tablaReservas;
     // End of variables declaration//GEN-END:variables
 }

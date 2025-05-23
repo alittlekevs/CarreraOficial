@@ -4,15 +4,11 @@
  */
 package datos;
 
-import com.mysql.cj.jdbc.Driver;
 import entidades.Silla;
-import entidades.Usuario;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +18,7 @@ import java.util.List;
  */
 public class DAOSillas {
 
+    //búsqueda
     public List<Silla> consultarSillasSinReserva() {
         Connection conn = null;
         List<Silla> sillasSinReserva = new ArrayList();
@@ -35,6 +32,26 @@ public class DAOSillas {
             }
         } catch (SQLException e) {
             System.err.println("consultarSillasSinReserva: " + e.getMessage());
+        } finally {
+            ConexionBD.desconectarBD(conn);
+        }
+        return sillasSinReserva;
+    }
+    
+    //consultar todas las sillas
+    public List<Silla> consultarSillas() {
+        Connection conn = null;
+        List<Silla> sillasSinReserva = new ArrayList();
+        try {
+            conn = ConexionBD.conectarBD();
+            PreparedStatement pst = conn.prepareStatement("select * from silla");
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                Silla s = new Silla(rs.getInt("numero"), rs.getString("tramo"), rs.getInt("precio") );
+                sillasSinReserva.add(s);
+            }
+        } catch (SQLException e) {
+            System.err.println("consultarSillas: " + e.getMessage());
         } finally {
             ConexionBD.desconectarBD(conn);
         }
@@ -57,5 +74,10 @@ public class DAOSillas {
             ConexionBD.desconectarBD(conn);
         }
         return tramos;
+    }
+    
+    //TODO
+    public void actualizarSillas(Silla s){
+    
     }
 }

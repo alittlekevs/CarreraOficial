@@ -4,10 +4,8 @@
  */
 package datos;
 
-import com.mysql.cj.jdbc.Driver;
 import entidades.Usuario;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,6 +19,13 @@ import java.util.List;
  */
 public class DAOUsuarios {
 
+    /*
+    *buscarPorLogin(String login)
+    *insertarUsuario(Usuario u)
+    *consultarUsuarios()
+    *eliminarUsuario(String login)
+    */
+    
     public Usuario buscarPorLogin(String login) {
         Usuario u = null;
         Connection conn = null;

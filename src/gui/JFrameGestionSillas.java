@@ -4,59 +4,42 @@
  */
 package gui;
 
-import datos.DAOFactura;
-import datos.DAORol;
-import datos.DAOUsuarios;
-import entidades.Factura;
-import entidades.Rol;
-import entidades.Usuario;
+import datos.DAOSillas;
+import entidades.Silla;
 import java.util.List;
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author Kevin
  */
-public class JFrameVerFacturas extends javax.swing.JFrame {
-
-    private List<Factura> listaFacturas;
-    private DefaultTableModel modeloFacturas;
+public class JFrameGestionSillas extends javax.swing.JFrame {
+    
+    private List<Silla> listaSillas;
+    private DefaultTableModel modeloSillas; 
+            
     /**
      * Creates new form JFrameGestionUsuarios
      */
-    public JFrameVerFacturas() {
+    public JFrameGestionSillas() {
         initComponents();
-        cargarFacturas();
+        cargarSillas();
         this.setLocationRelativeTo(null);
     }
     
-    private void cargarFacturas(){
-        DAOFactura daoFacturas = new DAOFactura();
-        listaFacturas = daoFacturas.consultarFacturas(); 
+    private void cargarSillas(){
+        DAOSillas daoSillas = new DAOSillas();
+        listaSillas = daoSillas.consultarSillas();
         
-        actualizarTabla(listaFacturas);
+        actualizarTabla(listaSillas);
     }
     
-    /*private void cargarRoles(){
-        DAORol daoRol = new DAORol();
-        List<Rol> roles = daoRol.consultarRoles();
-        
-        //Limpiamos la lista para que no se acumule
-        comboBoxRol.removeAllItems();
-        
-        //Nombres de los tramos
-        for (Rol r : roles) {
-            comboBoxRol.addItem(r.getRol());
-        }
-    }*/
-    
-    private void actualizarTabla(List<Factura> facturas) {
-        modeloFacturas = (DefaultTableModel) tablaFacturas.getModel(); //Casteamos la table porque no es compatible
-        modeloFacturas.setRowCount(0); // Aquí limpiamos la tabla
+    private void actualizarTabla(List<Silla> sillas) {
+        modeloSillas = (DefaultTableModel) tablaSillas.getModel(); //Casteamos la table porque no es compatible
+        modeloSillas.setRowCount(0); // Aquí limpiamos la tabla
 
-        for (Factura f : facturas) {
-            modeloFacturas.addRow(new Object[] { f.getCodigo(), f.getFechaEmision() });
+        for (Silla s : sillas) {
+            modeloSillas.addRow(new Object[] { s.getNumero(), s.getTramo(), s.getTramo().getPrecio(), s.getReserva(), s.getUsuario().getLogin()});
         }
     }
 
@@ -70,32 +53,39 @@ public class JFrameVerFacturas extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        tablaFacturas = new javax.swing.JTable();
+        tablaSillas = new javax.swing.JTable();
         etiquetaUsuarios = new javax.swing.JLabel();
         botonSalir = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        tablaFacturas.setModel(new javax.swing.table.DefaultTableModel(
+        tablaSillas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Código", "Fecha_Emision", "ID_Reserva"
+                "Número", "Tramo", "Precio", "ID_Reserva", "Login_Usuario"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Double.class, java.lang.Integer.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
         });
-        jScrollPane1.setViewportView(tablaFacturas);
+        jScrollPane1.setViewportView(tablaSillas);
 
         etiquetaUsuarios.setFont(new java.awt.Font("sansserif", 1, 24)); // NOI18N
-        etiquetaUsuarios.setText("Ver facturas");
+        etiquetaUsuarios.setText("Gestión de sillas");
 
         botonSalir.setText("Salir");
         botonSalir.addActionListener(new java.awt.event.ActionListener() {
@@ -117,7 +107,7 @@ public class JFrameVerFacturas extends javax.swing.JFrame {
                         .addComponent(botonSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
-                .addGap(331, 331, 331)
+                .addGap(301, 301, 301)
                 .addComponent(etiquetaUsuarios)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -159,14 +149,18 @@ public class JFrameVerFacturas extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(JFrameVerFacturas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(JFrameGestionSillas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(JFrameVerFacturas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(JFrameGestionSillas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(JFrameVerFacturas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(JFrameGestionSillas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(JFrameVerFacturas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(JFrameGestionSillas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -175,7 +169,7 @@ public class JFrameVerFacturas extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new JFrameVerFacturas().setVisible(true);
+                new JFrameGestionSillas().setVisible(true);
             }
         });
     }
@@ -184,6 +178,6 @@ public class JFrameVerFacturas extends javax.swing.JFrame {
     private javax.swing.JButton botonSalir;
     private javax.swing.JLabel etiquetaUsuarios;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tablaFacturas;
+    private javax.swing.JTable tablaSillas;
     // End of variables declaration//GEN-END:variables
 }

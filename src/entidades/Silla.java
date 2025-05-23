@@ -12,61 +12,67 @@ import java.util.Objects;
  * @author Kevin
  */
 public class Silla extends Tramo {
-    private double numero;
-    private List<Silla> sillas;
     
-    public Silla(int numero, String tramo, int precio) {
+    private int numero;
+    private Reserva reserva;
+    private Usuario usuario;
+    
+    public Silla(int numero, String tramo, double precio) {
         super(tramo, precio);
         this.numero = numero;
-        //sillas = new ArrayList();
     }
 
     //Getters & Setters
-    public double getNumero() {
+    public int getNumero() {
         return numero;
     }
     
-    public void setNumero(double numero){
+    public void setNumero(int numero){
         this.numero = numero;
     }
     
-    //Calcular precio total de una lista de Sillas
-    public double calcularPrecioTotal() {
-        if (sillas == null || sillas.isEmpty()) {
-            return 0.0; 
-        }
-        return sillas.stream()
-                .mapToDouble(silla -> silla.getPrecio()).sum(); 
+    public Reserva getReserva() {
+        return reserva;
+    }
+
+    public void setReserva(Reserva reserva) {
+        this.reserva = reserva;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
     
     @Override
     public String toString() {
-        return "Número: "+numero +",Tramo: "+super.getTramo()+",Precio: "+super.getPrecio()+"€";
+        return "Silla{" + 
+               "numero=" + numero + 
+               ", tramo='" + super.getTramo() + '\'' + 
+               ", precio=" + super.getPrecio() + 
+               ", reserva=" + (reserva != null ? reserva.toString() : "null") +
+               ", usuario=" + (usuario != null ? usuario.toString() : "null") +
+               '}';
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        return 41* hash + Objects.hashCode(this.numero);
+        int hash = super.hashCode();
+        hash = 31 * hash + numero;
+        return hash;
     }
-
-    @Override
-    //Comprobamos si dos sillas tienen el mismo número
+    
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Silla other = (Silla) obj;
-        if (!Objects.equals(this.numero, other.numero)) {
-            return false;
-        }
-        return true;
+        // Verificar referencia
+        if (this == obj) return true;
+        // Verificar que no sea null y que sea de la misma clase
+        if (obj == null || getClass() != obj.getClass()) return false;
+        // Comparar atributos únicos y heredados
+        Silla other = (Silla) obj;
+        return super.equals(other) && this.numero == other.numero;
     }
     
     //Métodos de ordenamiento tanto ascendente como descendente de precio 

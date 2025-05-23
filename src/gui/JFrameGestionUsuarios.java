@@ -8,9 +8,12 @@ import datos.DAORol;
 import datos.DAOUsuarios;
 import entidades.Rol;
 import entidades.Usuario;
+import java.awt.HeadlessException;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+
+
 
 /**
  *
@@ -20,15 +23,18 @@ public class JFrameGestionUsuarios extends javax.swing.JFrame {
 
     private List<Usuario> listaUsuarios;
     private DefaultTableModel modeloUsuarios;
+    private List<Rol> listaRoles;
     /**
      * Creates new form JFrameGestionUsuarios
      */
     public JFrameGestionUsuarios() {
         initComponents();
         cargarUsuarios();
+        cargarRoles();
         this.setLocationRelativeTo(null);
     }
     
+    //Métodos de carga
     private void cargarUsuarios(){
         DAOUsuarios daoUsuarios = new DAOUsuarios();
         listaUsuarios = daoUsuarios.consultarUsuarios();
@@ -36,18 +42,18 @@ public class JFrameGestionUsuarios extends javax.swing.JFrame {
         actualizarTabla(listaUsuarios);
     }
     
-    /*private void cargarRoles(){
+    private void cargarRoles(){
         DAORol daoRol = new DAORol();
-        List<Rol> roles = daoRol.consultarRoles();
+        listaRoles = daoRol.consultarRoles();
         
         //Limpiamos la lista para que no se acumule
         comboBoxRol.removeAllItems();
         
         //Nombres de los tramos
-        for (Rol r : roles) {
+        for (Rol r : listaRoles) {
             comboBoxRol.addItem(r.getRol());
         }
-    }*/
+    }
     
     private void actualizarTabla(List<Usuario> usuarios) {
         modeloUsuarios = (DefaultTableModel) tablaUsuarios.getModel(); //Casteamos la table porque no es compatible
@@ -77,8 +83,10 @@ public class JFrameGestionUsuarios extends javax.swing.JFrame {
         etiquetaRol = new javax.swing.JLabel();
         etiquetaPass = new javax.swing.JLabel();
         textPass = new javax.swing.JTextField();
-        botonSalir = new javax.swing.JButton();
-        textRol = new javax.swing.JTextField();
+        comboBoxRol = new javax.swing.JComboBox<>();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        menuInicio = new javax.swing.JMenu();
+        menuItemSalir = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -138,12 +146,21 @@ public class JFrameGestionUsuarios extends javax.swing.JFrame {
             }
         });
 
-        botonSalir.setText("Salir");
-        botonSalir.addActionListener(new java.awt.event.ActionListener() {
+        comboBoxRol.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        menuInicio.setText("Inicio");
+
+        menuItemSalir.setText("Salir");
+        menuItemSalir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonSalirActionPerformed(evt);
+                menuItemSalirActionPerformed(evt);
             }
         });
+        menuInicio.add(menuItemSalir);
+
+        jMenuBar1.add(menuInicio);
+
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -152,10 +169,7 @@ public class JFrameGestionUsuarios extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 804, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 729, Short.MAX_VALUE)
-                        .addComponent(botonSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 810, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(etiquetaLogin)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -164,70 +178,76 @@ public class JFrameGestionUsuarios extends javax.swing.JFrame {
                         .addComponent(etiquetaPass, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(etiquetaUsuarios)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(textPass, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
+                                .addGap(32, 32, 32)
                                 .addComponent(etiquetaRol)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(textRol, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(comboBoxRol, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(botonAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(botonEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                                .addComponent(botonEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(etiquetaUsuarios)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(12, Short.MAX_VALUE)
                 .addComponent(etiquetaUsuarios)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(etiquetaLogin)
                     .addComponent(textLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(etiquetaRol)
                     .addComponent(etiquetaPass)
                     .addComponent(textPass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(textRol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(botonAgregar)
-                    .addComponent(botonEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(botonEliminar)
+                    .addComponent(comboBoxRol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(etiquetaRol))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(botonSalir)
-                .addGap(8, 8, 8))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    //Eventos
     private void botonAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAgregarActionPerformed
         String login = textLogin.getText().trim();
         String password = textPass.getText().trim();
-        String rol = textRol.getText().trim();
+        String selectedRol = (String) comboBoxRol.getSelectedItem();
         
-        if (login.isEmpty() || password.isEmpty() || rol.isEmpty()) {
+        if (login.isEmpty() || password.isEmpty() || selectedRol == null) {
             JOptionPane.showMessageDialog(this, 
                     "Todos los campos son obligatorios.", 
                     "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
             return;
         }
         
-        Usuario nuevoUsuario = new Usuario(login, password, rol);
+        // Comparar el objeto rol con el seleccionado
+        Rol rol = listaRoles.stream()
+                .filter(r -> r.getRol().equals(selectedRol))
+                .findFirst()
+                .orElse(null);
+        
+        Usuario nuevoUsuario = new Usuario(login, password, rol.getRol());
         DAOUsuarios daoUsuarios = new DAOUsuarios();
         daoUsuarios.insertarUsuario(nuevoUsuario);
 
         // Añadimos el usuario a la tabla
-        modeloUsuarios.addRow(new Object[] { login , password, rol });
+        modeloUsuarios.addRow(new Object[] { login , password, rol.getRol() });
 
-        // Limpiamos los campos de texto
+        // Vaciamos los campos de texto
         textLogin.setText("");
         textPass.setText("");
-        textRol.setText("");
 
-        // Mostramos el mensaje de información
+        // Mostramos el mensaje de confirmación
         JOptionPane.showMessageDialog(this, 
                 "Usuario agregado correctamente.", 
                 "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
@@ -240,12 +260,6 @@ public class JFrameGestionUsuarios extends javax.swing.JFrame {
     private void textPassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textPassActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_textPassActionPerformed
-
-    private void botonSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonSalirActionPerformed
-        JFrameAdmin newframe = new JFrameAdmin();
-        dispose();
-        newframe.setVisible(true);
-    }//GEN-LAST:event_botonSalirActionPerformed
 
     private void botonEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEliminarActionPerformed
         // Fila
@@ -267,21 +281,44 @@ public class JFrameGestionUsuarios extends javax.swing.JFrame {
 
         if (opcion == JOptionPane.YES_OPTION) {
             // Cogemos el valor del login de esa fila (login)
-            String login = (String)tablaUsuarios.getValueAt(filaSeleccionada, 0); 
+            String login = (String) tablaUsuarios.getValueAt(filaSeleccionada, 0); 
 
             // Cargamos la base de datos para eliminar al usuario
             DAOUsuarios daoUsuarios = new DAOUsuarios();
-            daoUsuarios.eliminarUsuario(login); 
-
-            // Eliminar la fila del modelo
+            daoUsuarios.eliminarUsuario(login);
+            
             modeloUsuarios.removeRow(filaSeleccionada);
-
-            // Mostrar mensaje de éxito
+            
             JOptionPane.showMessageDialog(this, 
                     "Usuario eliminado correctamente.", 
                     "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            
+            //Preguntar
+//            try {
+//                daoUsuarios.eliminarUsuario(login);
+//                
+//            //Eliminar la fila del modelo tabla
+//                modeloUsuarios.removeRow(filaSeleccionada);
+//
+//            // Mostrar mensaje de éxito salvo que haya error
+//                JOptionPane.showMessageDialog(this, 
+//                    "Usuario eliminado correctamente.", 
+//                    "Éxito", JOptionPane.INFORMATION_MESSAGE);
+//            } catch (SQLException e){
+//                System.err.println("eliminarUsuario: " + e.getMessage());
+//                JOptionPane.showMessageDialog(this, 
+//                        "No se puede eliminar este usuario porque tiene reservas asociadas.\n" +
+//                        "Primero debe eliminar todas las reservas de este usuario.", 
+//                        "Error", JOptionPane.ERROR_MESSAGE);
+//            }
         }
     }//GEN-LAST:event_botonEliminarActionPerformed
+
+    private void menuItemSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSalirActionPerformed
+        JFrameAdmin newframe = new JFrameAdmin();
+        dispose();
+        newframe.setVisible(true);
+    }//GEN-LAST:event_menuItemSalirActionPerformed
 
     /**
      * @param args the command line arguments
@@ -321,15 +358,17 @@ public class JFrameGestionUsuarios extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonAgregar;
     private javax.swing.JButton botonEliminar;
-    private javax.swing.JButton botonSalir;
+    private javax.swing.JComboBox<String> comboBoxRol;
     private javax.swing.JLabel etiquetaLogin;
     private javax.swing.JLabel etiquetaPass;
     private javax.swing.JLabel etiquetaRol;
     private javax.swing.JLabel etiquetaUsuarios;
+    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JMenu menuInicio;
+    private javax.swing.JMenuItem menuItemSalir;
     private javax.swing.JTable tablaUsuarios;
     private javax.swing.JTextField textLogin;
     private javax.swing.JTextField textPass;
-    private javax.swing.JTextField textRol;
     // End of variables declaration//GEN-END:variables
 }

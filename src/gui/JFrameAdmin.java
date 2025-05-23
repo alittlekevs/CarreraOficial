@@ -27,23 +27,32 @@ public class JFrameAdmin extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        etiquetaAdmin = new javax.swing.JLabel();
-        botonGestionarUsuario = new javax.swing.JButton();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
+        jCheckBoxMenuItem1 = new javax.swing.JCheckBoxMenuItem();
+        jMenuItem3 = new javax.swing.JMenuItem();
+        jPanel1 = new javax.swing.JPanel();
         botonGestionarReservas = new javax.swing.JButton();
-        botonSalir = new javax.swing.JButton();
-        botonVerFacturas = new javax.swing.JButton();
+        botonGestionarUsuario = new javax.swing.JButton();
+        botonGestionarSillas = new javax.swing.JButton();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        menuInicio = new javax.swing.JMenu();
+        menuSalir = new javax.swing.JMenuItem();
+
+        jMenuItem1.setText("jMenuItem1");
+
+        jMenuItem2.setText("jMenuItem2");
+
+        jCheckBoxMenuItem1.setSelected(true);
+        jCheckBoxMenuItem1.setText("jCheckBoxMenuItem1");
+
+        jMenuItem3.setText("jMenuItem3");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Panel Administrador");
+        setPreferredSize(new java.awt.Dimension(446, 228));
 
-        etiquetaAdmin.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        etiquetaAdmin.setText("MENÚ ADMINISTRADOR");
-
-        botonGestionarUsuario.setText("Gestionar Usuarios");
-        botonGestionarUsuario.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonGestionarUsuarioActionPerformed(evt);
-            }
-        });
+        jPanel1.setBackground(new java.awt.Color(204, 255, 204));
 
         botonGestionarReservas.setText("Gestionar Reservas");
         botonGestionarReservas.addActionListener(new java.awt.event.ActionListener() {
@@ -52,59 +61,79 @@ public class JFrameAdmin extends javax.swing.JFrame {
             }
         });
 
-        botonSalir.setText("Salir");
-        botonSalir.addActionListener(new java.awt.event.ActionListener() {
+        botonGestionarUsuario.setText("Gestionar Usuarios");
+        botonGestionarUsuario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonSalirActionPerformed(evt);
+                botonGestionarUsuarioActionPerformed(evt);
             }
         });
 
-        botonVerFacturas.setText("Ver Facturas");
-        botonVerFacturas.addActionListener(new java.awt.event.ActionListener() {
+        botonGestionarSillas.setText("Gestionar Sillas");
+        botonGestionarSillas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonVerFacturasActionPerformed(evt);
+                botonGestionarSillasActionPerformed(evt);
             }
         });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(48, 48, 48)
+                .addComponent(botonGestionarUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(botonGestionarReservas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(39, 39, 39))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(botonGestionarSillas, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(102, 102, 102))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(botonGestionarReservas)
+                    .addComponent(botonGestionarUsuario))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(botonGestionarSillas)
+                .addContainerGap(34, Short.MAX_VALUE))
+        );
+
+        menuInicio.setText("Inicio");
+        menuInicio.addMenuKeyListener(new javax.swing.event.MenuKeyListener() {
+            public void menuKeyPressed(javax.swing.event.MenuKeyEvent evt) {
+                menuInicioMenuKeyPressed(evt);
+            }
+            public void menuKeyReleased(javax.swing.event.MenuKeyEvent evt) {
+            }
+            public void menuKeyTyped(javax.swing.event.MenuKeyEvent evt) {
+            }
+        });
+
+        menuSalir.setText("Salir");
+        menuSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuSalirActionPerformed(evt);
+            }
+        });
+        menuInicio.add(menuSalir);
+
+        jMenuBar1.add(menuInicio);
+
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(etiquetaAdmin)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(botonSalir)))
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(139, 139, 139)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(botonGestionarReservas)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(botonGestionarUsuario)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(botonVerFacturas)
-                            .addGap(16, 16, 16))))
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(etiquetaAdmin)
-                .addGap(38, 38, 38)
-                .addComponent(botonGestionarUsuario)
-                .addGap(26, 26, 26)
-                .addComponent(botonGestionarReservas)
-                .addGap(27, 27, 27)
-                .addComponent(botonVerFacturas)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 57, Short.MAX_VALUE)
-                .addComponent(botonSalir)
-                .addContainerGap())
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -122,17 +151,20 @@ public class JFrameAdmin extends javax.swing.JFrame {
         newframe.setVisible(true);
     }//GEN-LAST:event_botonGestionarReservasActionPerformed
 
-    private void botonSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonSalirActionPerformed
+    private void botonGestionarSillasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonGestionarSillasActionPerformed
+        JFrameGestionSillas newframe = new JFrameGestionSillas();
+        dispose();
+        newframe.setVisible(true);
+    }//GEN-LAST:event_botonGestionarSillasActionPerformed
+
+    private void menuInicioMenuKeyPressed(javax.swing.event.MenuKeyEvent evt) {//GEN-FIRST:event_menuInicioMenuKeyPressed
+    }//GEN-LAST:event_menuInicioMenuKeyPressed
+
+    private void menuSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSalirActionPerformed
         JFrameLogin newframe = new JFrameLogin();
         dispose();
         newframe.setVisible(true);
-    }//GEN-LAST:event_botonSalirActionPerformed
-
-    private void botonVerFacturasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonVerFacturasActionPerformed
-        JFrameVerFacturas newframe = new JFrameVerFacturas();
-        dispose();
-        newframe.setVisible(true);
-    }//GEN-LAST:event_botonVerFacturasActionPerformed
+    }//GEN-LAST:event_menuSalirActionPerformed
 
     /**
      * @param args the command line arguments
@@ -171,9 +203,15 @@ public class JFrameAdmin extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonGestionarReservas;
+    private javax.swing.JButton botonGestionarSillas;
     private javax.swing.JButton botonGestionarUsuario;
-    private javax.swing.JButton botonSalir;
-    private javax.swing.JButton botonVerFacturas;
-    private javax.swing.JLabel etiquetaAdmin;
+    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JMenu menuInicio;
+    private javax.swing.JMenuItem menuSalir;
     // End of variables declaration//GEN-END:variables
 }

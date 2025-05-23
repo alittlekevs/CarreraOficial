@@ -8,10 +8,11 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- *
+ * 
  * @author kevin
  */
 public class Usuario extends Rol{
+    
     private String login;
     private String password;
     private Rol rol;
@@ -20,7 +21,6 @@ public class Usuario extends Rol{
         super(rol);
         this.login = login;
         this.password = password;
-        //cuentas = new ArrayList();
     }
 
     public String getLogin() {
@@ -38,16 +38,6 @@ public class Usuario extends Rol{
     public void setPassword(String password) {
         this.password = password;
     }
-
-    
-    
-    //public void addEntrada(Entrada entrada) {
-    //    entradas.add(entrada);
-    //}
-    
-    //public List<Entrada> getEntradas() {
-    //    return entradas;
-    //}
     
     @Override
     public String toString() {

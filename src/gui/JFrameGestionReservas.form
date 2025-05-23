@@ -32,25 +32,12 @@
                       <Component id="botonSalir" min="-2" pref="75" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
-                      <Component id="etiquetaLogin" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="textLogin" min="-2" pref="130" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="etiquetaPass" min="-2" pref="72" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="etiquetaUsuarios" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="textPass" min="-2" pref="130" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="etiquetaRol" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="textRol" min="-2" pref="130" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="botonAgregar" min="-2" pref="75" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="botonEliminar" min="-2" pref="75" max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <EmptySpace min="-2" pref="271" max="-2" attributes="0"/>
+                              <Component id="etiquetaUsuarios" min="-2" max="-2" attributes="0"/>
                           </Group>
+                          <Component id="botonEliminar" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
@@ -64,19 +51,10 @@
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Component id="etiquetaUsuarios" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="55" max="32767" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="etiquetaLogin" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="textLogin" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="etiquetaRol" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="etiquetaPass" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="textPass" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="textRol" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="botonAgregar" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="botonEliminar" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane1" min="-2" pref="244" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
+              <Component id="botonEliminar" min="-2" pref="23" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="jScrollPane1" pref="282" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="botonSalir" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
@@ -92,17 +70,23 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JTable" name="tablaUsuarios">
+        <Component class="javax.swing.JTable" name="tablaReservas">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-              <Table columnCount="3" rowCount="0">
-                <Column editable="true" title="Nombre" type="java.lang.String"/>
-                <Column editable="true" title="Password" type="java.lang.String"/>
-                <Column editable="true" title="Rol" type="java.lang.String"/>
+              <Table columnCount="4" rowCount="0">
+                <Column editable="false" title="ID" type="java.lang.Integer"/>
+                <Column editable="false" title="Fecha Reserva" type="java.lang.String"/>
+                <Column editable="false" title="Precio Total" type="java.lang.Double"/>
+                <Column editable="false" title="Login Usuario" type="java.lang.String"/>
               </Table>
             </Property>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
               <TableColumnModel selectionModel="0">
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                  <Title/>
+                  <Editor/>
+                  <Renderer/>
+                </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                   <Title/>
                   <Editor/>
@@ -127,14 +111,6 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JButton" name="botonAgregar">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Agregar"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="botonAgregarActionPerformed"/>
-      </Events>
-    </Component>
     <Component class="javax.swing.JButton" name="botonEliminar">
       <Properties>
         <Property name="text" type="java.lang.String" value="Eliminar"/>
@@ -148,42 +124,8 @@
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="sansserif" size="24" style="1"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="Gestionar Usuarios"/>
+        <Property name="text" type="java.lang.String" value="Gestionar Reservas"/>
       </Properties>
-    </Component>
-    <Component class="javax.swing.JLabel" name="etiquetaLogin">
-      <Properties>
-        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-          <Font name="sansserif" size="14" style="0"/>
-        </Property>
-        <Property name="text" type="java.lang.String" value="Login:"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JTextField" name="textLogin">
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="textLoginActionPerformed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JLabel" name="etiquetaRol">
-      <Properties>
-        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-          <Font name="sansserif" size="14" style="0"/>
-        </Property>
-        <Property name="text" type="java.lang.String" value="Rol:"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JLabel" name="etiquetaPass">
-      <Properties>
-        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-          <Font name="sansserif" size="14" style="0"/>
-        </Property>
-        <Property name="text" type="java.lang.String" value="Password:"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JTextField" name="textPass">
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="textPassActionPerformed"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="botonSalir">
       <Properties>
@@ -192,8 +134,6 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="botonSalirActionPerformed"/>
       </Events>
-    </Component>
-    <Component class="javax.swing.JTextField" name="textRol">
     </Component>
   </SubComponents>
 </Form>

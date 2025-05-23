@@ -4,30 +4,37 @@
  */
 package gui;
 
+import datos.DAOReserva;
 import datos.DAOSillas;
 import entidades.Silla;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import entidades.Factura;
+import entidades.Reserva;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Date;
 /**
  *
  * @author Kevin
  */
 public class JFrameReserva extends javax.swing.JFrame {
 
-    private List<Silla> listaSillas; // Lista completa de sillas
+    //En el toggle utilizo compareTo
+    //En filtroPorTramo utilizo .stream con .equals + .collect(collection.sort) para ordenar por defecto
+    
+    private List<Silla> listaSillasDisponibles; // Lista completa de sillas
+    private List<Silla> listaSillasReservadas;
     private DefaultTableModel modeloSillasDisponibles; //Tabla con los datos de las sillas disponibles
     private DefaultTableModel modeloSillasReservables; //Tabla con los datos de las sillas que se encuentran para reservar
-    private String login;
+    //private String login;
     /**
      * Creates new form Reserva
      */
-    public JFrameReserva(String login) {
-        this.login = login;
-        
+    public JFrameReserva() {
+        //this.login = login;
         setTitle("Reservar sillas");
         //Centrar
         initComponents();
@@ -40,9 +47,9 @@ public class JFrameReserva extends javax.swing.JFrame {
     //Método para cargar las sillas
     private void cargarSillas(){
         DAOSillas daoSillas = new DAOSillas();
-        listaSillas = daoSillas.consultarSillasSinReserva(); 
+        listaSillasDisponibles = daoSillas.consultarSillasSinReserva(); 
         
-        actualizarTabla(listaSillas);
+        actualizarTabla(listaSillasDisponibles);
     }
     
     //Método para cargar los datos de la consulta tramos
@@ -66,9 +73,9 @@ public class JFrameReserva extends javax.swing.JFrame {
             // Filtrar la lista de sillas según el tramo seleccionado
             List<Silla> sillasFiltradas;
             if ("Todos".equals(tramoSeleccionado)) {
-                sillasFiltradas = listaSillas; // Mostrar todas las sillas
+                sillasFiltradas = listaSillasDisponibles; // Mostrar todas las sillas
             } else {
-                sillasFiltradas = listaSillas.stream() //Aplicamos stream para filtrar las sillas
+                sillasFiltradas = listaSillasDisponibles.stream() //Aplicamos stream para filtrar las sillas
                         .filter(silla -> silla.getTramo().equals(tramoSeleccionado))
                         .collect(Collectors.toList()); //Ordenamiento por defecto (alfabético)
             }
@@ -121,6 +128,10 @@ public class JFrameReserva extends javax.swing.JFrame {
         toggleOrdenPrecio = new javax.swing.JToggleButton();
         etiquetaTotal = new javax.swing.JLabel();
         campoPrecioTotal = new javax.swing.JLabel();
+        jDateChooser1 = new com.toedter.calendar.JDateChooser();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        menuInicio = new javax.swing.JMenu();
+        menuItemSalir = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -175,6 +186,11 @@ public class JFrameReserva extends javax.swing.JFrame {
         etiquetaSillasDisponibles.setText("Reservar Sillas");
 
         tramoComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        tramoComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tramoComboBoxActionPerformed(evt);
+            }
+        });
 
         botonAgregar.setText("Agregar");
         botonAgregar.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -238,54 +254,75 @@ public class JFrameReserva extends javax.swing.JFrame {
         campoPrecioTotal.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         campoPrecioTotal.setText("0 €");
 
+        menuInicio.setText("Inicio");
+        menuInicio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuInicioActionPerformed(evt);
+            }
+        });
+
+        menuItemSalir.setText("Salir");
+        menuItemSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemSalirActionPerformed(evt);
+            }
+        });
+        menuInicio.add(menuItemSalir);
+
+        jMenuBar1.add(menuInicio);
+
+        setJMenuBar(jMenuBar1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(toggleOrdenPrecio)
-                        .addContainerGap(727, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(226, 226, 226)
+                        .addComponent(etiquetaSillasDisponibles))
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(botonAgregar, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(botonQuitar, javax.swing.GroupLayout.Alignment.TRAILING)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(tramoComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 176, Short.MAX_VALUE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(282, 282, 282)
-                                .addComponent(botonReservar))
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(botonAgregar)
+                                    .addComponent(botonQuitar)))
+                            .addComponent(tramoComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(etiquetaTotal)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(campoPrecioTotal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addGap(18, 18, 18))))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(etiquetaSillasDisponibles)
-                .addGap(291, 291, 291))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(campoPrecioTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jDateChooser1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(botonReservar))
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE))))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(26, Short.MAX_VALUE)
-                .addComponent(etiquetaSillasDisponibles)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(toggleOrdenPrecio)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tramoComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botonReservar))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(toggleOrdenPrecio)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(25, 25, 25)
+                        .addComponent(etiquetaSillasDisponibles)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(tramoComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(botonReservar)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
@@ -354,6 +391,31 @@ public class JFrameReserva extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_botonQuitarMouseClicked
 
+    private List<Silla> obtenerSillasReservables() {
+        for (int i = 0; i < modeloSillasReservables.getRowCount(); i++) {
+            int numero = (int) modeloSillasReservables.getValueAt(i, 0);
+            String tramo = (String) modeloSillasReservables.getValueAt(i, 1);
+            double precio = (double) modeloSillasReservables.getValueAt(i, 2);
+
+            // Crear un objeto Silla y agregarlo a la lista
+            Silla silla = new Silla(numero, tramo, precio);
+            listaSillasReservadas.add(silla);
+        }
+
+        return listaSillasReservadas;
+    }
+    //cambiar por calcular el precioTotal de la lista
+    private double calcularPrecioTotal() {
+        double precioTotal = 0.0;
+    
+        for (int i = 0; i < modeloSillasReservables.getRowCount(); i++) {
+            precioTotal += (double) modeloSillasReservables.getValueAt(i, 2);
+        }
+    
+        return precioTotal;
+    }
+    
+    /*
     private void botonReservarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonReservarMouseClicked
         if (tablaReservables.getRowCount()== 0) {
         JOptionPane.showMessageDialog(this,
@@ -367,20 +429,69 @@ public class JFrameReserva extends javax.swing.JFrame {
                 "Confirmar Reserva",
                 JOptionPane.YES_NO_OPTION);
         if (opcion == JOptionPane.YES_OPTION) {
-            generarFicheroFactura(login, , );
+            try {
+            // Obtener las sillas seleccionadas para la reserva
+            List<Silla> sillasReservadas = obtenerSillasReservables();
+            
+            // Verificar que haya sillas seleccionadas
+            if (sillasReservadas.isEmpty()) {
+                JOptionPane.showMessageDialog(this,
+                        "No se seleccionaron sillas para la reserva.",
+                        "Advertencia",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
+        // Crear una nueva reserva
+        DAOReserva daoReserva = new DAOReserva();
+        Reserva reserva = new Reserva(jCalendar1, listaSillasReservadas); //corregir
+
+        // Realizar la reserva
+        daoReserva.reservarSillas(reserva);//corregir
+
+        // Mostrar mensaje de éxito
+        JOptionPane.showMessageDialog(this,
+                "Reserva realizada con éxito.\nID de Reserva: " + reserva.getId(),
+                "Éxito",
+                JOptionPane.INFORMATION_MESSAGE);
+
+        cargarSillas(); // Recargar las sillas disponibles
+        modeloSillasReservables.setRowCount(0); // Limpiar la tabla de reservables
+        actualizarPrecioTotal(); // Reiniciar el precio total
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Ocurrió un error al realizar la reserva.\n" + e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            }
         }
     }//GEN-LAST:event_botonReservarMouseClicked
-
+*/  
     private void toggleOrdenPrecioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleOrdenPrecioActionPerformed
         if (toggleOrdenPrecio.isSelected()) {
               // Ordenar por precio descendente
-            listaSillas.sort((s1, s2) -> s1.compareToDesc(s2));
+            listaSillasDisponibles.sort((s1, s2) -> s1.compareToDesc(s2));
         } else {
             // Ordenar por precio ascendente
-            listaSillas.sort((s1, s2) -> s1.compareTo(s2));
+            listaSillasDisponibles.sort((s1, s2) -> s1.compareTo(s2));
         }
-        actualizarTabla(listaSillas);
+        actualizarTabla(listaSillasDisponibles);
     }//GEN-LAST:event_toggleOrdenPrecioActionPerformed
+
+    private void tramoComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tramoComboBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tramoComboBoxActionPerformed
+
+    private void menuInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuInicioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuInicioActionPerformed
+
+    private void menuItemSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSalirActionPerformed
+        JFrameLogin newframe = new JFrameLogin();
+        dispose();
+        newframe.setVisible(true);
+    }//GEN-LAST:event_menuItemSalirActionPerformed
 
     /**
      * @param args the command line arguments
@@ -427,8 +538,12 @@ public class JFrameReserva extends javax.swing.JFrame {
     private javax.swing.JLabel campoPrecioTotal;
     private javax.swing.JLabel etiquetaSillasDisponibles;
     private javax.swing.JLabel etiquetaTotal;
+    private com.toedter.calendar.JDateChooser jDateChooser1;
+    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JMenu menuInicio;
+    private javax.swing.JMenuItem menuItemSalir;
     private javax.swing.JTable tablaReservables;
     private javax.swing.JTable tablaSillasDisponibles;
     private javax.swing.JToggleButton toggleOrdenPrecio;

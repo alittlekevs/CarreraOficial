@@ -25,4 +25,9 @@ public class Rol {
         this.rol = rol;
     }
     
+    public String toString() {
+        // Representar el objeto como una cadena
+        return "Rol{" + "rol='" + rol + '\'' + '}';
+    }
+
 }
